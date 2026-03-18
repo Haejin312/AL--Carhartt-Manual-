@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Carhartt WF">
+<title>Carhartt Workflow</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --amber: #F4A800;
+    --amber-dark: #C98A00;
+    --amber-light: #FFD060;
+    --bg: #0a0a0a;
+    --bg2: #141414;
+    --bg3: #1e1e1e;
+    --bg4: #262626;
+    --border: #2e2e2e;
+    --text: #f0f0f0;
+    --text2: #a0a0a0;
+    --text3: #606060;
+    --red: #e05252;
+    --green: #52c47a;
+    --blue: #52a8e0;
+    --orange: #e08c52;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: var(--bg);
+    border-bottom: 2px solid var(--amber);
+    padding: 0 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--amber);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: #000;
+  }
+  .header-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+  .header-title span { color: var(--amber); }
+  .header-version {
+    font-size: 11px;
+    color: var(--text3);
+    background: var(--bg3);
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  /* SEARCH */
+  .search-bar {
+    padding: 12px 16px;
+    background: var(--bg);
+    position: sticky;
+    top: 56px;
+    z-index: 99;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-input-wrap {
+    position: relative;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 16px 10px 40px;
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--amber); }
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    font-size: 16px;
+  }
+
+  /* PHASE TABS */
+  .phase-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 10px 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .phase-tabs::-webkit-scrollbar { display: none; }
+  .phase-tab {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text2);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .phase-tab.active {
+    background: var(--amber);
+    color: #000;
+    border-color: var(--amber);
+  }
+
+  /* MAIN CONTENT */
+  .main { padding: 16px; padding-bottom: 40px; }
+
+  /* FLOW PHASE HEADER */
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+  .phase-header:first-child { margin-top: 0; }
+  .phase-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--amber);
+    color: #000;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .phase-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+  .phase-connector {
+    width: 2px;
+    height: 16px;
+    background: var(--amber);
+    margin-left: 17px;
+    margin-bottom: 4px;
+    opacity: 0.4;
+  }
+
+  /* STEP CARD */
+  .step-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .step-card.open { border-color: var(--amber); }
+  .step-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    cursor: pointer;
+    gap: 12px;
+    user-select: none;
+  }
+  .step-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 32px;
+    text-align: center;
+  }
+  .step-info { flex: 1 }
+  .step-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.03em;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .step-subtitle {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .step-badges {
+    display: flex;
+    gap: 4px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+  }
+  .badge-team { background: rgba(244,168,0,0.15); color: var(--amber); }
+  .badge-time { background: rgba(82,164,224,0.15); color: var(--blue); }
+  .badge-warn { background: rgba(224,82,82,0.15); color: var(--red); }
+  .badge-ok { background: rgba(82,196,122,0.15); color: var(--green); }
+
+  .step-chevron {
+    color: var(--text3);
+    font-size: 18px;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .step-card.open .step-chevron { transform: rotate(180deg); color: var(--amber); }
+
+  /* DETAIL PANEL */
+  .step-detail {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .step-card.open .step-detail { display: block; }
+
+  .detail-section {
+    margin-top: 14px;
+  }
+  .detail-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .detail-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* TASK LIST */
+  .task-list { display: flex; flex-direction: column; gap: 6px; }
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--bg3);
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .task-item .task-icon { flex-shrink: 0; margin-top: 1px; }
+
+  /* WARN LIST */
+  .warn-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    background: rgba(224,82,82,0.08);
+    border-left: 3px solid var(--red);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+
+  /* NOTE LIST */
+  .note-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    background: rgba(244,168,0,0.08);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+
+  /* SUBMIT INFO */
+  .submit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .submit-card {
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .submit-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .submit-card-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--amber);
+    line-height: 1.4;
+  }
+  .submit-card.full { grid-column: 1 / -1; }
+
+  /* FORM CHIPS */
+  .form-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .form-chip {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* SEARCH HIGHLIGHT */
+  .highlight { background: rgba(244,168,0,0.3); border-radius: 2px; }
+  .step-card.hidden { display: none; }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--text3);
+  }
+  .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+
+  /* SCROLL TO TOP */
+  .scroll-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background: var(--amber);
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 200;
+    box-shadow: 0 4px 16px rgba(244,168,0,0.4);
+  }
+  .scroll-top.visible { opacity: 1; }
+
+  /* VERSION TAG */
+  .source-tag {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text3);
+    padding: 20px 0 8px;
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-logo">
+    <div class="header-logo-icon">C</div>
+    <div class="header-title"><span>carhartt</span> WORKFLOW</div>
+  </div>
+  <div class="header-version">V2.2 · FA26</div>
+</header>
+
+<div class="search-bar">
+  <div class="search-input-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" placeholder="Search steps, tasks, keywords..." id="searchInput">
+  </div>
+</div>
+
+<div class="phase-tabs" id="phaseTabs">
+  <div class="phase-tab active" data-phase="all">All</div>
+  <div class="phase-tab" data-phase="1">1. Tech Pack</div>
+  <div class="phase-tab" data-phase="2">2. Proto</div>
+  <div class="phase-tab" data-phase="3">3. Color</div>
+  <div class="phase-tab" data-phase="4">4. Wash</div>
+  <div class="phase-tab" data-phase="5">5. Artwork</div>
+  <div class="phase-tab" data-phase="6">6. Raw Materials</div>
+  <div class="phase-tab" data-phase="7">7. Sampling</div>
+  <div class="phase-tab" data-phase="8">8. Testing</div>
+  <div class="phase-tab" data-phase="9">9. Production</div>
+</div>
+
+<main class="main" id="mainContent">
+
+<!-- ==================== PHASE 1: TECH PACK ==================== -->
+<div class="phase-connector" data-phase="1"></div>
+<div class="phase-header" data-phase="1">
+  <div class="phase-num">1</div>
+  <div class="phase-label">TECH PACK RECEIPT & REVIEW</div>
+</div>
+
+<div class="step-card" data-phase="1" data-keywords="tech pack review bom size chart construction">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">📦</div>
+    <div class="step-info">
+      <div class="step-name">Tech Pack 수령 & 구조 이해</div>
+      <div class="step-subtitle">Development / Production 타입 확인</div>
+      <div class="step-badges">
+        <span class="badge badge-team">TD / PD</span>
+        <span class="badge badge-time">즉시</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 확인할 것</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Tech Pack 상단 타입 확인: <b>Development / Production with new Care Format</b> 등</div>
+        <div class="task-item"><span class="task-icon">▸</span>Style# / Description / Season / Department / Category 확인</div>
+        <div class="task-item"><span class="task-icon">▸</span>담당자 확인: Designer / Product Developer / Technical Designer</div>
+        <div class="task-item"><span class="task-icon">▸</span><b>Washed 체크박스</b> — 체크되어 있으면 Wash Development 필수</div>
+        <div class="task-item"><span class="task-icon">▸</span><b>Parent Style / Block 번호</b> 확인 — Child Style이면 해당 Parent Tech Pack도 함께 참조</div>
+        <div class="task-item"><span class="task-icon">▸</span>Active Colorways / Fit / PPE 정보 확인</div>
+        <div class="task-item"><span class="task-icon">▸</span>BOM 확인 — Fabric / Trim / Label / Thread / Zipper 전 항목</div>
+        <div class="task-item"><span class="task-icon">▸</span>Documents 섹션 — Construction Sketches / Label Placement / Wash Formula / Folding Guide 확인</div>
+        <div class="task-item"><span class="task-icon">▸</span>Size Chart (POMs) 및 Tolerance 확인</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ BOM에 없는 supplier의 원자재는 절대 사용 불가. Carhartt nominated supplier만 사용</div>
+      <div class="warn-item">⚠️ Local sourcing 금지 — woven label, HTL, button, snap, zipper, thread, care label 모두 BOM 지정 supplier에서 구매</div>
+      <div class="warn-item">⚠️ 같은 PO 내 서로 다른 supplier의 트림 혼용 금지</div>
+      <div class="note-item">💡 Tech Pack 질문은 담당 팀별로 문의: Front/Back Sketch → Design, Construction Sketches → TD, BOM → PD, Care Label → P&L, Size Chart → TD</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📬 문의처</div>
+      <div class="submit-grid">
+        <div class="submit-card"><div class="submit-card-label">TD (Technical Design)</div><div class="submit-card-value">Construction, Size Chart, Pattern</div></div>
+        <div class="submit-card"><div class="submit-card-label">PD (Product Dev)</div><div class="submit-card-value">BOM, Wash Formula, Lab Dip</div></div>
+        <div class="submit-card"><div class="submit-card-label">P&L</div><div class="submit-card-value">Care Label, Folding Guide, Packaging</div></div>
+        <div class="submit-card"><div class="submit-card-label">Vendor Portal</div><div class="submit-card-value">모든 문서 업로드 / 다운로드</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="1" data-keywords="parent child block style graphic">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🔗</div>
+    <div class="step-info">
+      <div class="step-name">Parent / Child Style 확인</div>
+      <div class="step-subtitle">Block 번호 → Vendor Portal에서 Block Tech Pack 찾기</div>
+      <div class="step-badges">
+        <span class="badge badge-team">TD</span>
+        <span class="badge badge-time">즉시</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 확인할 것</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Cover Page의 <b>Parent Style/Block</b> 번호 확인 (예: MKT025.050)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Vendor Portal → Styles → Season: <b>Blocks</b> 필터 → 해당 Block 번호 검색</div>
+        <div class="task-item"><span class="task-icon">▸</span>Block Tech Pack 다운로드 — Construction Sketches + Size Chart + Quality Spec 여기에 있음</div>
+        <div class="task-item"><span class="task-icon">▸</span>Child Style Tech Pack에는 BOM + Artwork + Wash Formula + Folding Guide만 있음</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">💡 Block 번호 체계</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span><b>MKT</b> = Men's Knit Tops, <b>MKS</b> = Men's Knit Sweats</div>
+        <div class="task-item"><span class="task-icon">▸</span><b>WKT</b> = Women's Knit Tops, <b>WKS</b> = Women's Knit Sweats</div>
+        <div class="task-item"><span class="task-icon">▸</span>예: MKT019.<b>001</b> → MKT019의 variation 1번 (포켓 없는 버전 등)</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ Block Tech Pack에는 BOM이 없음. BOM은 반드시 Child Style Tech Pack에서 확인</div>
+      <div class="warn-item">⚠️ Block Tech Pack과 Finished Good Graphic Style Tech Pack 사이에 불일치가 있으면 즉시 TD에 문의</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 2: PROTO SAMPLE ==================== -->
+<div class="phase-connector" data-phase="2"></div>
+<div class="phase-header" data-phase="2">
+  <div class="phase-num">2</div>
+  <div class="phase-label">PROTO SAMPLE DEVELOPMENT</div>
+</div>
+
+<div class="step-card" data-phase="2" data-keywords="proto sample physical fabric trim">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🧵</div>
+    <div class="step-info">
+      <div class="step-name">Physical Proto Sample 제작</div>
+      <div class="step-subtitle">1st Proto: 3주 / 2nd Proto 이후: 2주 턴타임</div>
+      <div class="step-badges">
+        <span class="badge badge-team">Vendor → TD/PD</span>
+        <span class="badge badge-time">1st: 3주 / 2nd+: 2주</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 할 일</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>실제 원단(correct quality rib, lining, insulation) 사용 필수</div>
+        <div class="task-item"><span class="task-icon">▸</span>Functional trims (waist/cuff elastic, hook & loop) 정품 사용 필수</div>
+        <div class="task-item"><span class="task-icon">▸</span>샘플 측정 후 measurements → Vendor Portal POM's 탭에 직접 입력</div>
+        <div class="task-item"><span class="task-icon">▸</span>Tech Pack vs 실제 construction 비교 → 불일치 사항 document화</div>
+        <div class="task-item"><span class="task-icon">▸</span>Digital pattern은 <b>DXF format</b>으로 준비 (종이 패턴 금지)</div>
+        <div class="task-item"><span class="task-icon">▸</span>샘플 발송 동시에 문서 Vendor Portal → Sample > Documents 탭 업로드</div>
+        <div class="task-item"><span class="task-icon">▸</span>Costing → 샘플 Due Date 전에 Sourcing 제출 완료</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📌 샘플 태그 부착 위치</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Tops & Outerwear: <b>왼쪽 겨드랑이 (left exterior underarm)</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>Bottoms: <b>왼쪽 허리밴드 (left exterior waistband)</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>측정 완료 샘플에는 태그에 "<b>TD Sample-Measured</b>" 표기</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ Due Date = Dearborn 도착일. X-factory 날짜가 아님!</div>
+      <div class="warn-item">⚠️ Proto BOM에는 Material color 미지정 — 컬러 선택 자유</div>
+      <div class="warn-item">⚠️ 대체 원단/트림 사용 시 반드시 Sample Hangtag에 명시</div>
+      <div class="note-item">💡 1st proto에 변경사항 없으면 → 바로 1st fit sample로 사용 가능</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📬 발송처</div>
+      <div class="submit-grid">
+        <div class="submit-card full">
+          <div class="submit-card-label">Ship To</div>
+          <div class="submit-card-value">Carhartt Inc. · ATTN: Sample Tracking<br>5800 Mercury Drive, Dearborn, MI 48126</div>
+        </div>
+        <div class="submit-card">
+          <div class="submit-card-label">Vendor Portal 문의</div>
+          <div class="submit-card-value">crichmond@carhartt.com</div>
+        </div>
+        <div class="submit-card">
+          <div class="submit-card-label">문서 업로드 후</div>
+          <div class="submit-card-value">"Notify Tech Designers" 선택</div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📋 관련 양식</div>
+      <div class="form-chips">
+        <div class="form-chip">📋 Sample Submission Hangtag</div>
+        <div class="form-chip">📏 POM Measurement Sheet</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="2" data-keywords="digital 3d clo sample proto">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🖥️</div>
+    <div class="step-info">
+      <div class="step-name">Digital (3D/CLO) Proto Sample</div>
+      <div class="step-subtitle">요청 시에만 — Physical Proto와 병행</div>
+      <div class="step-badges">
+        <span class="badge badge-team">TD</span>
+        <span class="badge badge-time">1st: 3주 / 2nd+: 2주</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 할 일</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>파일 형식: <b>.zprj (CLO Project file)</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>CLO-Set의 'In-Season Development' workroom에 업로드</div>
+        <div class="task-item"><span class="task-icon">▸</span>컬러: mid to light-tone (black/navy 사용 금지), 모든 active colorway 포함</div>
+        <div class="task-item"><span class="task-icon">▸</span>업로드 후 TD + sampletracking@carhartt.com 이메일 통보</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ CLO 파일을 PLM/Vendor Portal에 업로드 금지 — CLO-Set에만 업로드</div>
+      <div class="warn-item">⚠️ Digital + Physical 함께 제출 → 코멘트는 하나로 통합해서 받음</div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="2" data-keywords="fit approval proto comment tag production">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">✅</div>
+    <div class="step-info">
+      <div class="step-name">Fit Approval & Tech Pack Lock</div>
+      <div class="step-subtitle">승인 후 4주 이내 생산 가능 여부 확인 필수</div>
+      <div class="step-badges">
+        <span class="badge badge-team">TD</span>
+        <span class="badge badge-warn">⏱ 4주 데드라인</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 할 일</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Fit Approval 후 <b>4주 이내</b>에 생산 공장과 approved construction/grading 실행 가능 여부 확인</div>
+        <div class="task-item"><span class="task-icon">▸</span>Tech Pack 변경 요청 있으면 이 4주 안에 TD에 제출</div>
+        <div class="task-item"><span class="task-icon">▸</span>4주 지나면 Tech Pack 변경 불가 — NO CHANGES WILL BE MADE</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ 4주 데드라인 후 Tech Pack 변경 절대 불가!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 3: COLOR / LAB DIP ==================== -->
+<div class="phase-connector" data-phase="3"></div>
+<div class="phase-header" data-phase="3">
+  <div class="phase-num">3</div>
+  <div class="phase-label">COLOR DEVELOPMENT & LAB DIP</div>
+</div>
+
+<div class="step-card" data-phase="3" data-keywords="lab dip color development natific asap submit">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🎨</div>
+    <div class="step-info">
+      <div class="step-name">Lab Dip 제출 (Natific ASAP 사용)</div>
+      <div class="step-subtitle">1st: 13일 / Reject 후 재제출: 8일</div>
+      <div class="step-badges">
+        <span class="badge badge-team">Vendor → Color Team</span>
+        <span class="badge badge-time">피드백: 48시간 내</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 할 일</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Lab dip 요청 즉시 color standard 구매 → color standard provider에 주문</div>
+        <div class="task-item"><span class="task-icon">▸</span>내부 자체 검토 후 최적 submit 1개만 제출 (절대 여러 개 보내지 않음)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Submit form 완전히 작성 — <b>Dye Class 필수 기재</b> (미기재 시 개발 중단)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Natific ASAP에 measurable development 업로드</div>
+        <div class="task-item"><span class="task-icon">▸</span>Non-measurable: ASAP 시스템 사용하되 'visual' 태그</div>
+        <div class="task-item"><span class="task-icon">▸</span>랩딥 사이즈: 최소 <b>5" × 5"</b> (불가 시 2"×4" → 2세트 제출, 사전 승인 필요)</div>
+        <div class="task-item"><span class="task-icon">▸</span>2세트 제출 원칙</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📐 색상 기준 (Color Criteria)</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>광원: <b>D65 (Primary) / CWF (Secondary) / IncA (Tertiary)</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>Lab Dip 기준: <b>≤ 0.6 DE CMC</b> (D65, CWF), <b>≤ 1.5 DE CMC</b> (IncA)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Metamerism: <b>≤ 0.8 Metameric Index</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>Bulk 기준: <b>≤ 1.0 DE CMC</b> to lab dip (D65, CWF), FR bulk: ≤ 1.5 DE CMC</div>
+        <div class="task-item"><span class="task-icon">▸</span>측정기: Datacolor SF600 또는 X-Rite i7 권장</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ Carhartt Brown — Best Can Do 승인 절대 없음. 반드시 스펙트럴 + 비주얼 요건 충족</div>
+      <div class="warn-item">⚠️ Supplier가 자체 QTX 생성 금지 — Carhartt 또는 color standard provider로부터 수령</div>
+      <div class="warn-item">⚠️ 색상 매칭 위치에는 반드시 full-size color standard 보유 (예외 없음)</div>
+      <div class="note-item">💡 SMS 원단 염색은 lab dip 승인 대기 없이 진행 — 마지막 rejected dip 컬러로 진행</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📋 관련 양식</div>
+      <div class="form-chips">
+        <div class="form-chip">📋 Lab Dip Submission Form</div>
+        <div class="form-chip">📋 ASAP Lab Dip Evaluation Form</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 4: WASH DEVELOPMENT ==================== -->
+<div class="phase-connector" data-phase="4"></div>
+<div class="phase-header" data-phase="4">
+  <div class="phase-num">4</div>
+  <div class="phase-label">WASH DEVELOPMENT</div>
+</div>
+
+<div class="step-card" data-phase="4" data-keywords="wash denim tube full garment formula testing">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🌊</div>
+    <div class="step-info">
+      <div class="step-name">Denim Wash Development</div>
+      <div class="step-subtitle">Tube → Full Garment → Shade Band 순서</div>
+      <div class="step-badges">
+        <span class="badge badge-team">PD (Category Lead)</span>
+        <span class="badge badge-time">Tube: 15일 / FGT: 21-28일</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">📊 턴타임</div>
+      <div class="submit-grid">
+        <div class="submit-card"><div class="submit-card-label">Wash Tube (1st)</div><div class="submit-card-value">15일</div></div>
+        <div class="submit-card"><div class="submit-card-label">Wash Tube (이후)</div><div class="submit-card-value">10일</div></div>
+        <div class="submit-card"><div class="submit-card-label">Full Garment (1st)</div><div class="submit-card-value">15일</div></div>
+        <div class="submit-card"><div class="submit-card-label">Full Garment (이후)</div><div class="submit-card-value">10일</div></div>
+        <div class="submit-card"><div class="submit-card-label">FGT Testing</div><div class="submit-card-value">21-28일</div></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">✅ Tube Stage 제출물</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>원단 확보: 200yds + 스타일당 50yds 추가 (Mill에서 Vendor가 직접 어레인지)</div>
+        <div class="task-item"><span class="task-icon">▸</span>제출: <b>2세트</b> (1 PD 보관 / 1 승인 후 Vendor 반환)</div>
+        <div class="task-item"><span class="task-icon">▸</span>반드시 포함: ① Wash Formula ② Tube Testing 결과 ③ 4"×4" Rigid Fabric 스와치</div>
+        <div class="task-item"><span class="task-icon">▸</span>Formula & Testing → 이메일로도 동시 발송</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">✅ Full Garment Stage 제출물</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>제출: <b>3세트</b> (1 PD 보관 / 1 Vendor 반환 / 1 QA Reference)</div>
+        <div class="task-item"><span class="task-icon">▸</span>반드시 포함: ① Wash Formula ② Wash Testing ③ 4"×4" Rigid Fabric</div>
+        <div class="task-item"><span class="task-icon">▸</span>승인 시: PD가 서명된 garment 1점 Reference로 반환</div>
+        <div class="task-item"><span class="task-icon">▸</span>승인 후 즉시 → FGT 진행</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ RSL & Chemistry 주의사항</div>
+      <div class="warn-item">⚠️ PP Spray (Potassium Permanganate) 사용 절대 금지 — 개발 및 생산 전 과정</div>
+      <div class="warn-item">⚠️ Bleach는 PD + QA 승인된 지정 용량만 사용 가능. 반드시 중화처리 필수</div>
+      <div class="note-item">💡 Pumice stones: 고대비 피니쉬 달성 시 사용 가능 (물성 관리 + 닉킹 최소화 조건)</div>
+      <div class="note-item">💡 Shade Band: 새 washed style은 반드시 QA Washed Shade Band 절차에 따라 제출. Vendor가 retainer 보관</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📋 관련 양식</div>
+      <div class="form-chips">
+        <div class="form-chip">📋 Wash Formula Template - Woven</div>
+        <div class="form-chip">📋 Wash Formula Template - Knit</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="4" data-keywords="wash non-denim knit woven resource">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">💧</div>
+    <div class="step-info">
+      <div class="step-name">Non-Denim / Resourced Wash</div>
+      <div class="step-subtitle">Non-Denim: PD / Resourced Non-Denim: Quality Team</div>
+      <div class="step-badges">
+        <span class="badge badge-team">PD / Quality Team</span>
+        <span class="badge badge-time">Tube: 15일</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ Non-Denim 특이사항</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Tube 원단: 약 20yds (Denim보다 적음)</div>
+        <div class="task-item"><span class="task-icon">▸</span>모든 colorway에 대해 Full Garment 제출</div>
+        <div class="task-item"><span class="task-icon">▸</span>나머지 프로세스는 Denim과 동일</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">✅ Resourced Wash 조건</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>기존 컬러의 fabric supplier 변경 시</div>
+        <div class="task-item"><span class="task-icon">▸</span>기존 스타일을 신규 vendor로 resourcing 시</div>
+        <div class="task-item"><span class="task-icon">▸</span>Mill dye class 변경 시</div>
+        <div class="task-item"><span class="task-icon">▸</span>Wash facility 변경 시</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📬 Resourced Non-Denim 제출처</div>
+      <div class="submit-grid">
+        <div class="submit-card full">
+          <div class="submit-card-label">Quality Team (Non-Denim)</div>
+          <div class="submit-card-value">285 Carhartt Ave., Irvine, Kentucky 40336</div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">💡 Rinse Wash 예외</div>
+      <div class="note-item">💡 10분 이하, 화학첨가물 없는 rinse wash는 wash development 면제</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 5: GRAPHIC ARTWORK ==================== -->
+<div class="phase-connector" data-phase="5"></div>
+<div class="phase-header" data-phase="5">
+  <div class="phase-num">5</div>
+  <div class="phase-label">GRAPHIC ARTWORK & HANDLOOM</div>
+</div>
+
+<div class="step-card" data-phase="5" data-keywords="graphic artwork strike off placement approval">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🖼️</div>
+    <div class="step-info">
+      <div class="step-name">Graphic Strike-off (S/O) 개발</div>
+      <div class="step-subtitle">1st S/O: 3주 / 이후: 2주 / 4세트 제출</div>
+      <div class="step-badges">
+        <span class="badge badge-team">PD → Design Resources</span>
+        <span class="badge badge-time">1st: 3주</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 할 일</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>PD로부터 Kick-off 레터 수령 (key dates 포함)</div>
+        <div class="task-item"><span class="task-icon">▸</span>기존 shell color → 1st round S/O 제출. 신규 shell color → 1st round lab dip으로 제출 (SMS용 BCD)</div>
+        <div class="task-item"><span class="task-icon">▸</span>매 라운드 <b>4세트</b> S/O 제출 (PD로 발송)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Preferred color standard: <b>Coated Pantone chips</b></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📐 승인 기준</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>승인 항목: Layout/Registration / Size / Technique / Color</div>
+        <div class="task-item"><span class="task-icon">▸</span>Tolerance: 3" 미만 그래픽 → <b>±1mm</b>, 3" 이상 → <b>±3mm</b></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ Proto에서 artwork placement 코멘트 없음 — Placement Sample에서만 코멘트</div>
+      <div class="warn-item">⚠️ 아트워크 승인 즉시 → Full Garment Placement Sample 3주 내 제출 의무</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📬 발송처</div>
+      <div class="submit-grid">
+        <div class="submit-card full">
+          <div class="submit-card-label">Strike-off 발송</div>
+          <div class="submit-card-value">Product Development 담당자<br>5800 Mercury Drive, Dearborn MI 48126</div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📋 관련 양식</div>
+      <div class="form-chips">
+        <div class="form-chip">📋 Graphic Submission Form</div>
+        <div class="form-chip">📋 Embroidery Approval Form</div>
+        <div class="form-chip">📋 All Over Print Submission Form</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="5" data-keywords="handloom plaid yarn dye repeat">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🧶</div>
+    <div class="step-info">
+      <div class="step-name">Handloom 개발 & 승인</div>
+      <div class="step-subtitle">2-3 repeat 필수 / ¼" 허용 오차</div>
+      <div class="step-badges">
+        <span class="badge badge-team">PD / RM / Design Resources</span>
+        <span class="badge badge-time">1st: 3주 / 이후: 2주</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 할 일</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>PD로부터 Kick-off 레터, 아트워크 파일(Hightail), Yarn Dye Terminology doc 수령</div>
+        <div class="task-item"><span class="task-icon">▸</span>2세트 제출: 1 Design Resources용 / 1 PD 또는 RM용</div>
+        <div class="task-item"><span class="task-icon">▸</span>Full repeat 포함, 최소 <b>2-3 repeats</b> 확인 가능한 크기</div>
+        <div class="task-item"><span class="task-icon">▸</span>Repeat pattern tolerance: <b>± ¼"</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>Color standard: Pantone TCX / CSI / Archroma swatches</div>
+        <div class="task-item"><span class="task-icon">▸</span>색상 코멘트: 퍼센트 단위로 (15% 단위 시작)</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📋 관련 양식</div>
+      <div class="form-chips">
+        <div class="form-chip">📋 Handloom Submission Form</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 6: RAW MATERIALS ==================== -->
+<div class="phase-connector" data-phase="6"></div>
+<div class="phase-header" data-phase="6">
+  <div class="phase-num">6</div>
+  <div class="phase-label">RAW MATERIALS & FABRIC DEVELOPMENT</div>
+</div>
+
+<div class="step-card" data-phase="6" data-keywords="fabric development raw material RM submission testing">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🏭</div>
+    <div class="step-info">
+      <div class="step-name">Fabric Development 제출</div>
+      <div class="step-subtitle">Physical + Testing 완료 후 RM팀에 제출</div>
+      <div class="step-badges">
+        <span class="badge badge-team">RM Team</span>
+        <span class="badge badge-time">Full Package: 21일</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 제출 전 체크리스트</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Fabric Specification Sheet Tab#1 완성 → 전자 + 하드카피 동시 제출</div>
+        <div class="task-item"><span class="task-icon">▸</span>Physical Testing (Tab#2) / Performance Testing (Tab#3) 완료 후 제출</div>
+        <div class="task-item"><span class="task-icon">▸</span>Test Report 전자 사본 RM팀 이메일 제출</div>
+        <div class="task-item"><span class="task-icon">▸</span>RSL 확인 — AFIRM Guidelines 준수 여부 확인</div>
+        <div class="task-item"><span class="task-icon">▸</span>원단 2야드 (full width) 발송 — Face side 마킹 필수</div>
+        <div class="task-item"><span class="task-icon">▸</span>Fabric Submission Label 부착 (Mill명 / Component# / 성분 / 중량 / 폭)</div>
+        <div class="task-item"><span class="task-icon">▸</span><b>F24 이후: OEKO-TEX STANDARD 100 연간 인증 필수</b></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ DWR Chemistry: 신제품은 반드시 C0 (Fluorine-free) DWR 사용. FR 제품만 C6 이하 허용</div>
+      <div class="warn-item">⚠️ PFAS: SP24 생산분부터 기능성 피니쉬로 PFAS 사용 금지 (DWR C6, Stain Release C6, PTFE 포함)</div>
+      <div class="warn-item">⚠️ 화학약품 변경 시 — 변경 전 반드시 Carhartt Material Developer에 서면 승인 요청</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📋 관련 양식</div>
+      <div class="form-chips">
+        <div class="form-chip">📋 Fabric Submission Label Template</div>
+        <div class="form-chip">📋 Fabric Specification Sheet</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 7: SAMPLING ==================== -->
+<div class="phase-connector" data-phase="7"></div>
+<div class="phase-header" data-phase="7">
+  <div class="phase-num">7</div>
+  <div class="phase-label">SMS / TAG / MERCH SAMPLING</div>
+</div>
+
+<div class="step-card" data-phase="7" data-keywords="SMS salesman sample color trim packaging size">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">👕</div>
+    <div class="step-info">
+      <div class="step-name">SMS (Salesman Sample) 제작</div>
+      <div class="step-subtitle">정확한 원단 컬러 + 트림 사용 필수</div>
+      <div class="step-badges">
+        <span class="badge badge-team">Vendor → Sample Tracking</span>
+        <span class="badge badge-warn">Due Date = 도착일</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ SMS 사이즈 기준</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Men's Tops: <b>Medium</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>Men's Bottoms: <b>34×32 / Medium</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>Men's Outerwear: <b>Medium</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>Women's Tops: <b>Small</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>Women's Bottoms: <b>6 Reg / Small</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>Women's Outerwear: <b>Small</b></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 패키징 요건</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>기존 재고 패키징 사용 (시즌 개발 미완성이므로)</div>
+        <div class="task-item"><span class="task-icon">▸</span>P&L Variable data 승인 불필요 (SMS는 면제)</div>
+        <div class="task-item"><span class="task-icon">▸</span>UPC 라벨 필수 — nominated packaging/labeling vendor에서 요청</div>
+        <div class="task-item"><span class="task-icon">▸</span>Care label → Carhartt P&L Manual의 SMS care 라벨로 대체</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📏 NEW (SP26~): 치수 측정 의무</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>각 size/color의 <b>10% 측정</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>10%가 1장 미만이면 최소 3장 측정 (수량이 3장 미만이면 전량)</div>
+        <div class="task-item"><span class="task-icon">▸</span>측정 결과 스캔/PDF → Vendor Portal Sample>Documents 탭 업로드 → "Notify Tech Designers" 선택</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 대체재 사용 시</div>
+      <div class="warn-item">⚠️ 대체 원단/트림/컬러 사용 전 반드시 PD 승인 필요</div>
+      <div class="warn-item">⚠️ Sample Tracking팀 CC 필수</div>
+      <div class="warn-item">⚠️ SMS Exception Form 작성 → Due Date까지 PD에 제출</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📋 관련 양식</div>
+      <div class="form-chips">
+        <div class="form-chip">📋 SMS Exception Form</div>
+        <div class="form-chip">📋 Sample Submission Hangtag</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="7" data-keywords="TAG technical grading sample size range fit">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">📐</div>
+    <div class="step-info">
+      <div class="step-name">TAG (Technical & Grading) Sample</div>
+      <div class="step-subtitle">Fit Approval 후 → 전 사이즈 그레이딩 검증</div>
+      <div class="step-badges">
+        <span class="badge badge-team">Vendor → TD</span>
+        <span class="badge badge-time">3주 턴타임</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 할 일</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Shell 원단: correct content/weight 사용 (생산용 yardage 불필요 — sample yardage 가능)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Functional trims (cuff/waistband elastic, hook & loop): 정품 사용 필수</div>
+        <div class="task-item"><span class="task-icon">▸</span>Wash: 지정된 wash recipe/formula 그대로 적용</div>
+        <div class="task-item"><span class="task-icon">▸</span>Vendor 측정 완료 후 → Vendor Portal TAG Required Sample>Documents 탭 업로드</div>
+        <div class="task-item"><span class="task-icon">▸</span>DXF 형식 Digital Nested Graded Patterns 첨부 (종이 패턴 금지)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Sample Tag 완전 기재 (style, vendor, size, 대체재 명시)</div>
+        <div class="task-item"><span class="task-icon">▸</span>패키징 불필요 (UPC 스티커, hang tag 등 모두 면제)</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">✅ Digital TAG Sample 추가 요건</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>CLO-set 제출 + TD에 이메일 통보</div>
+        <div class="task-item"><span class="task-icon">▸</span>Review mode (all in one file) 또는 size별 separate file</div>
+        <div class="task-item"><span class="task-icon">▸</span>Front/Side/Back 스크린샷 — 전 사이즈 같은 화면에</div>
+        <div class="task-item"><span class="task-icon">▸</span>Carhartt-Alvanon avatar 사용 / naked avatar (레이어링 없음)</div>
+        <div class="task-item"><span class="task-icon">▸</span>후드 스타일: hood up으로 제출 / Steaming/pins/tacks 사용 금지</div>
+        <div class="task-item"><span class="task-icon">▸</span>"Washed" digital sample 현재 미허용</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📬 발송처</div>
+      <div class="submit-grid">
+        <div class="submit-card full">
+          <div class="submit-card-label">Ship To</div>
+          <div class="submit-card-value">Carhartt Inc. · ATTN: Sample Tracking<br>5800 Mercury Drive, Dearborn, MI 48126</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="7" data-keywords="TOP sample PASS quality SP26">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🏭</div>
+    <div class="step-info">
+      <div class="step-name">TOP Sample → PASS Process (SP26~)</div>
+      <div class="step-subtitle">F25 이후 TOP Sample 폐지 → Quality PASS로 대체</div>
+      <div class="step-badges">
+        <span class="badge badge-team">Quality Team</span>
+        <span class="badge badge-ok">SP26부터 변경</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">💡 변경 내용</div>
+      <div class="note-item">💡 F25 이후 TD는 더 이상 TOP Sample을 요청하지 않음. Quality팀의 PASS 프로세스로 대체됨. 상세 내용은 Quality팀에 문의.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 8: TESTING ==================== -->
+<div class="phase-connector" data-phase="8"></div>
+<div class="phase-header" data-phase="8">
+  <div class="phase-num">8</div>
+  <div class="phase-label">TESTING PROCESS</div>
+</div>
+
+<div class="step-card" data-phase="8" data-keywords="FGT finished goods testing fabric trim color blocking">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🔬</div>
+    <div class="step-info">
+      <div class="step-name">Finished Goods Testing (FGT)</div>
+      <div class="step-subtitle">새 원단/트림/컬러블로킹/레인웨어/신규 Vendor 시 필수</div>
+      <div class="step-badges">
+        <span class="badge badge-team">Vendor (Sourcing Support 요청)</span>
+        <span class="badge badge-time">결과: Harry Jin 제출</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 할 일</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Sourcing Support로부터 FGT 요청 수령 (Style# / Color / Due Date 포함)</div>
+        <div class="task-item"><span class="task-icon">▸</span>PO 없이 Vendor가 자체적으로 FGT 샘플 제작 및 원자재 조달</div>
+        <div class="task-item"><span class="task-icon">▸</span>In-house + 3rd party lab 조합 결정 → 필요한 FGT 수량 산정</div>
+        <div class="task-item"><span class="task-icon">▸</span>Lab TRF 작성 후 garment와 함께 lab 제출</div>
+        <div class="task-item"><span class="task-icon">▸</span>FGT Protocol 작성 (Pass/Fail + 데이터 결과 + Lab Report 번호)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Retest 시: 원본 FGT Protocol에 retest 결과 컬럼 추가 기재</div>
+        <div class="task-item"><span class="task-icon">▸</span>완료 후 Vendor 서명 + 날짜 기재 → Harry Jin에 제출</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ 테스트 완료된 전 샘플 (Pass/Fail 모두) + Physical Test Reports → Carhartt로 발송 필수</div>
+      <div class="warn-item">⚠️ 작은 조각/remnant 발송 금지 — meaningful samples만</div>
+      <div class="warn-item">⚠️ FGT용 PO 발행 없음 — Vendor 책임으로 샘플 제작</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📬 결과 제출처</div>
+      <div class="submit-grid">
+        <div class="submit-card full">
+          <div class="submit-card-label">FGT Data 제출</div>
+          <div class="submit-card-value">Harry Jin · Asia Sourcing Office</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="8" data-keywords="RSL restricted substance AFIRM PFAS DWR chemistry">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🧪</div>
+    <div class="step-info">
+      <div class="step-name">RSL (Restricted Substance List)</div>
+      <div class="step-subtitle">AFIRM RSL 전면 준수 필수</div>
+      <div class="step-badges">
+        <span class="badge badge-team">All Vendors</span>
+        <span class="badge badge-warn">필수 컴플라이언스</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 핵심 RSL 요건</div>
+      <div class="warn-item">⚠️ AFIRM RSL 전면 준수 (https://afirm-group.com/afirm-rsl)</div>
+      <div class="warn-item">⚠️ SP24~ PFAS 기능성 피니쉬 금지 (DWR C6, Stain Release C6, PTFE 포함)</div>
+      <div class="warn-item">⚠️ PFAS 오염 방지 가이드라인 보유 필수 (타 브랜드용 PFAS 사용 시설도 해당)</div>
+      <div class="warn-item">⚠️ 모든 신제품 C0 Fluorine-free DWR 사용 (FR 제품은 C6 이하 허용)</div>
+      <div class="warn-item">⚠️ F24~: 모든 원자재 OEKO-TEX STANDARD 100 연간 인증 필수</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 고위험 테스트 항목</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>APEOs / Formaldehyde / Total Heavy Metals / PFAS / Phthalates / Organotins</div>
+        <div class="task-item"><span class="task-icon">▸</span>DWR/Stain Release 피니쉬: Total Fluorine 테스트 → Not Detected 요건</div>
+        <div class="task-item"><span class="task-icon">▸</span>PFAS 오염 확인: Total Fluorine (EN 14582:2016 또는 ASTM D7359:2018)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="8" data-keywords="colorfastness high risk black navy red color">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🖤</div>
+    <div class="step-info">
+      <div class="step-name">High-Risk Colorfastness Testing</div>
+      <div class="step-subtitle">Black / Navy / Red 등 고채도 색상</div>
+      <div class="step-badges">
+        <span class="badge badge-team">Fabric Supplier → Color Team</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 할 일</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>시즌 초 Color Team이 high-risk 컬러 지정 통보</div>
+        <div class="task-item"><span class="task-icon">▸</span>Fabric supplier 책임으로 colorfastness 테스트 수행</div>
+        <div class="task-item"><span class="task-icon">▸</span>SMS 잉여 원단으로 테스트 진행</div>
+        <div class="task-item"><span class="task-icon">▸</span>공인 testing facility 이용 → 디지털 lab report → Category Color Analyst에 제출</div>
+        <div class="task-item"><span class="task-icon">▸</span>Fail 시: 물리적 test specimen → Carhartt에 발송</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="8" data-keywords="CLO warmth testing outerwear insulation">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🌡️</div>
+    <div class="step-info">
+      <div class="step-name">CLO Warmth Testing</div>
+      <div class="step-subtitle">보온 Outerwear 필수 — SMS와 동시 요청</div>
+      <div class="step-badges">
+        <span class="badge badge-team">Vendor → PD</span>
+        <span class="badge badge-time">SMS와 동시</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 테스트 요건</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>대상: Men's/Women's Mainline, PPE, CCG Outerwear</div>
+        <div class="task-item"><span class="task-icon">▸</span>제외: unlined bibs, vests (데이터용으로만 테스트 가능), exclusives, Storm Defender (uninsulated)</div>
+        <div class="task-item"><span class="task-icon">▸</span>제출: SMS 샘플 사용 (생산과 가장 유사한 원자재/스타일)</div>
+        <div class="task-item"><span class="task-icon">▸</span>수량: <b>각 스타일 3장</b> (Men's Medium / Women's Large / Coveralls는 XL 추가)</div>
+        <div class="task-item"><span class="task-icon">▸</span>동일 스타일 print/solid 동일 spec → 한 쪽만 테스트</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📬 발송처</div>
+      <div class="submit-grid">
+        <div class="submit-card full">
+          <div class="submit-card-label">Dearborn PD Team</div>
+          <div class="submit-card-value">Attn: Sample Tracking<br>5800 Mercury Dr., Dearborn, MI 481266</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="8" data-keywords="rainwear duty WR AATCC35 water resistance">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">☔</div>
+    <div class="step-info">
+      <div class="step-name">Rainwear Duty Testing (WRDT)</div>
+      <div class="step-subtitle">생산 초기 TOP 제품 → AATCC 35 수행</div>
+      <div class="step-badges">
+        <span class="badge badge-team">Vendor (비용 부담)</span>
+        <span class="badge badge-warn">Bulk X-fac 전 결과 필수</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 할 일</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Sourcing Support로부터 WRDT 요청 수령 (SR type: WRDT)</div>
+        <div class="task-item"><span class="task-icon">▸</span>3rd party 공인 lab에서 AATCC 35 Water Resistance Rain Test 수행</div>
+        <div class="task-item"><span class="task-icon">▸</span>샘플: <b>생산 TOP에서 추출</b> — bulk production 원단/트림 사용 필수</div>
+        <div class="task-item"><span class="task-icon">▸</span>컬러당 1개 스타일만 테스트 (전 컬러 불필요)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Garment 발송 불필요 (Carhartt가 별도 요청 시에만)</div>
+        <div class="task-item"><span class="task-icon">▸</span>모든 테스트 비용 Vendor 부담</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📬 결과 제출처 (디지털)</div>
+      <div class="submit-grid">
+        <div class="submit-card"><div class="submit-card-label">QA</div><div class="submit-card-value">Ashley Henry, Rae Gordon, Field Auditor</div></div>
+        <div class="submit-card"><div class="submit-card-label">Compliance</div><div class="submit-card-value">Lisa Jenkins, Nikki Adams</div></div>
+        <div class="submit-card"><div class="submit-card-label">Sourcing</div><div class="submit-card-value">Sample Tracking, Sourcing Manager, Asia Sourcing Manager</div></div>
+        <div class="submit-card"><div class="submit-card-label">PD</div><div class="submit-card-value">PD lead, PD Manager</div></div>
+        <div class="submit-card full"><div class="submit-card-label">이메일 제목 형식</div><div class="submit-card-value">"S26 WR Duty Testing - 105749, 105861"</div></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ Bulk X-factory 전 결과 수령 필수 — 정확한 관세율 적용을 위해</div>
+      <div class="warn-item">⚠️ Fail 시 → Carhartt QA/PD/RM과 협의, 재테스트 필요 가능</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 9: PRODUCTION ==================== -->
+<div class="phase-connector" data-phase="9"></div>
+<div class="phase-header" data-phase="9">
+  <div class="phase-num">9</div>
+  <div class="phase-label">PRODUCTION PREP & TRIM CARD</div>
+</div>
+
+<div class="step-card" data-phase="9" data-keywords="variable data label care PO P&L review">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">🏷️</div>
+    <div class="step-info">
+      <div class="step-name">P&L Variable Data Review</div>
+      <div class="step-subtitle">생산 전 NEW & COLOR ADD 스타일만 제출</div>
+      <div class="step-badges">
+        <span class="badge badge-team">Vendor → P&L Team</span>
+        <span class="badge badge-time">2-3 영업일 피드백</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 제출 대상 (이메일 승인 필요)</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Care Labels per colorway / PO-Season Labels</div>
+        <div class="task-item"><span class="task-icon">▸</span>Size Tapes / Matchbook Sizers (shorts only)</div>
+        <div class="task-item"><span class="task-icon">▸</span>UPC RFID Stickers per colorway</div>
+        <div class="task-item"><span class="task-icon">▸</span>Woven Back Neck/Waist Labels / Woven Size Flag Labels</div>
+        <div class="task-item"><span class="task-icon">▸</span>Heat Transfer Back Neck/Waist Labels / Pocket Bag Heat Transfer Labels</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">❌ 제출 불필요 (BOM 따르면 됨)</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Patches / Printed Locker Loops / Printed Neck Tapes</div>
+        <div class="task-item"><span class="task-icon">▸</span>Hang Tags / Pocket Riders / Bib Stickers / Warning Labels</div>
+        <div class="task-item"><span class="task-icon">▸</span>Polybag/polywraps / Paperboard inserts</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📧 이메일 형식</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>제목: <b>FA26/Outerwear/Label Layout Reviews/날짜</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>PPE 스타일: <b>FA26/Outerwear-PPE/Label Layout Reviews/날짜</b></div>
+        <div class="task-item"><span class="task-icon">▸</span>Body: Variable Information Email Template 복사/붙여넣기 (첨부 금지)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Artwork 파일: 이메일에 첨부 (body에 삽입 금지)</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📬 카테고리별 담당자</div>
+      <div class="submit-grid">
+        <div class="submit-card"><div class="submit-card-label">Bottoms + PPE/CCG</div><div class="submit-card-value">Jenni Sheets Parsons<br>Annika Barkovic</div></div>
+        <div class="submit-card"><div class="submit-card-label">Mainline Tops + OW</div><div class="submit-card-value">Amber Martin-Hayes<br>Annika Barkovic</div></div>
+        <div class="submit-card"><div class="submit-card-label">Exclusives + Accessories</div><div class="submit-card-value">Seth Ferzo<br>Annika Barkovic</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="9" data-keywords="trim card production PO BOM component">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">📎</div>
+    <div class="step-info">
+      <div class="step-name">Production Trim Card 제출</div>
+      <div class="step-subtitle">1st PO 발행 후 60일 이내 제출</div>
+      <div class="step-badges">
+        <span class="badge badge-team">Vendor → PD + QA</span>
+        <span class="badge badge-time">60일 데드라인</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 제출 요건</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>NEW + COLOR ADD 스타일 매 시즌 필수 (Carryover는 Tech Pack 업데이트 시에만)</div>
+        <div class="task-item"><span class="task-icon">▸</span>1st PO 발행일로부터 <b>60일 이내</b> 제출</div>
+        <div class="task-item"><span class="task-icon">▸</span>Carhartt 공식 Trim Card Template 사용 (2 tabs: PD Components + P&L Components)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Physical Trim Card + PDF (컬러 스캔) 모두 제출</div>
+        <div class="task-item"><span class="task-icon">▸</span>BOM 모든 컴포넌트 포함 (substitute/누락 불허)</div>
+        <div class="task-item"><span class="task-icon">▸</span>PLM 벤더: Vendor Portal SR에 PDF 첨부 + 이메일 통보</div>
+        <div class="task-item"><span class="task-icon">▸</span>Non-PLM 벤더: Smartsheet에 PDF 첨부</div>
+        <div class="task-item"><span class="task-icon">▸</span>Physical은 PD + QA 각각 발송</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ Sub/Best Can Do 트림 불허 — 생산 BOM 지정 트림만</div>
+      <div class="warn-item">⚠️ PD Component 승인은 Physical Trim Card 수령 및 검토 후에만 진행</div>
+      <div class="warn-item">⚠️ 시즌별 트림 컬러 일관성 유지 의무. 불가 시 생산 전 Quality팀에 non-conformance로 통보</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📬 발송처</div>
+      <div class="submit-grid">
+        <div class="submit-card">
+          <div class="submit-card-label">PD (Physical)</div>
+          <div class="submit-card-value">Carhartt Inc.<br>5800 Mercury Drive<br>Dearborn, MI 48126</div>
+        </div>
+        <div class="submit-card">
+          <div class="submit-card-label">QA (Physical)</div>
+          <div class="submit-card-value">Carhartt Inc.<br>285 Carhartt Ave.<br>Irvine, KY 40336</div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📬 PD 카테고리별 담당자</div>
+      <div class="submit-grid">
+        <div class="submit-card"><div class="submit-card-label">OW&Bottoms New</div><div class="submit-card-value">Stacie Bott (CC: Caitlin Buffa)</div></div>
+        <div class="submit-card"><div class="submit-card-label">OW&Bottoms Color Add</div><div class="submit-card-value">Carly Wright (CC: Caitlin Buffa)</div></div>
+        <div class="submit-card"><div class="submit-card-label">Acc&Tops New</div><div class="submit-card-value">Lauren DiFilippo (CC: Jackie Wray)</div></div>
+        <div class="submit-card"><div class="submit-card-label">Acc&Tops Color Add</div><div class="submit-card-value">Sam Darragh (CC: Jackie Wray / Seth Ferzo)</div></div>
+        <div class="submit-card"><div class="submit-card-label">CCG</div><div class="submit-card-value">Hannah Bolzak (CC: Kayla Korn)</div></div>
+        <div class="submit-card"><div class="submit-card-label">PPE</div><div class="submit-card-value">Vera Lukiy (CC: Mercedes Partyka)</div></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">📋 관련 양식</div>
+      <div class="form-chips">
+        <div class="form-chip">📋 Trim Card Submission Template</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" data-phase="9" data-keywords="resourcing resource style pattern production approved">
+  <div class="step-header" onclick="toggleStep(this)">
+    <div class="step-icon">♻️</div>
+    <div class="step-info">
+      <div class="step-name">Resourcing (기존 스타일 신규 공장)</div>
+      <div class="step-subtitle">기존 생산 샘플 + Approved Pattern 수령 후 진행</div>
+      <div class="step-badges">
+        <span class="badge badge-team">TD / PD</span>
+      </div>
+    </div>
+    <div class="step-chevron">⌄</div>
+  </div>
+  <div class="step-detail">
+    <div class="detail-section">
+      <div class="detail-section-title">✅ 할 일</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">▸</span>Proto 요청 시 생산 샘플(reference) + Fit-approved Pattern 함께 수령</div>
+        <div class="task-item"><span class="task-icon">▸</span>기존 construction 최대한 그대로 재현 (소비자 착용 경험 일관성 유지)</div>
+        <div class="task-item"><span class="task-icon">▸</span>Original pattern의 shape/balance 반드시 유지</div>
+        <div class="task-item"><span class="task-icon">▸</span>수정 필요 시 → Proto 제작 전 TD/Resourcing Manager 승인 필수</div>
+        <div class="task-item"><span class="task-icon">▸</span>Vendor Manual의 모든 해당 개발 단계 동일하게 진행</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">⚠️ 주의사항</div>
+      <div class="warn-item">⚠️ 원본과 다른 construction/pattern 변경은 사전 승인 없이 절대 불가</div>
+    </div>
+  </div>
+</div>
+
+<div class="empty-state" id="emptyState" style="display:none">
+  <div class="empty-state-icon">🔍</div>
+  <div>검색 결과가 없습니다</div>
+</div>
+
+<div class="source-tag">Based on Carhartt Vendor Manual V2.2 · Feb 2025 · FA26 & SP27<br>© Apparel Links Internal Reference Tool</div>
+
+</main>
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<script>
+// Toggle step
+function toggleStep(header) {
+  const card = header.parentElement;
+  const isOpen = card.classList.contains('open');
+  card.classList.toggle('open', !isOpen);
+}
+
+// Search
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  const cards = document.querySelectorAll('.step-card');
+  const phases = document.querySelectorAll('.phase-header, .phase-connector');
+  let visibleCount = 0;
+
+  cards.forEach(card => {
+    const text = (card.textContent + ' ' + (card.dataset.keywords || '')).toLowerCase();
+    const visible = !q || text.includes(q);
+    card.classList.toggle('hidden', !visible);
+    if (visible) visibleCount++;
+  });
+
+  // Show/hide phases based on visible cards
+  document.querySelectorAll('[data-phase]').forEach(el => {
+    if (el.classList.contains('phase-header') || el.classList.contains('phase-connector')) {
+      const phase = el.dataset.phase;
+      const hasVisible = document.querySelectorAll(`.step-card[data-phase="${phase}"]:not(.hidden)`).length > 0;
+      el.style.display = (!q || hasVisible) ? '' : 'none';
+    }
+  });
+
+  document.getElementById('emptyState').style.display = visibleCount === 0 ? 'block' : 'none';
+});
+
+// Phase tabs
+document.querySelectorAll('.phase-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.phase-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    const phase = this.dataset.phase;
+    searchInput.value = '';
+
+    document.querySelectorAll('.step-card').forEach(card => {
+      card.classList.remove('hidden');
+    });
+    document.querySelectorAll('[data-phase]').forEach(el => {
+      el.style.display = '';
+    });
+
+    if (phase !== 'all') {
+      document.querySelectorAll('.step-card').forEach(card => {
+        card.classList.toggle('hidden', card.dataset.phase !== phase);
+      });
+      document.querySelectorAll('.phase-header, .phase-connector').forEach(el => {
+        el.style.display = el.dataset.phase === phase ? '' : 'none';
+      });
+      // Scroll to phase
+      const target = document.querySelector(`.phase-header[data-phase="${phase}"]`);
+      if (target) setTimeout(() => target.scrollIntoView({behavior: 'smooth', block: 'start'}), 100);
+    }
+    document.getElementById('emptyState').style.display = 'none';
+  });
+});
+
+// Scroll to top button
+window.addEventListener('scroll', function() {
+  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+});
+
+// Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
